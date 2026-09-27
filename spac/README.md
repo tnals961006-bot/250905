@@ -22,7 +22,7 @@
 | `data/my_trades.csv` | 내 실제 청약·매도 기록 (복기용, 직접 입력) |
 | `ROUTINE.md` | 매일 자동 실행 절차 |
 | `data/intraday.csv`, `timing.py` | 상장 첫날 시각별 가격 → 시간대별 상승률 표 |
-| `listed.py`, `data/listed.csv`, `data/holdings.csv` | 기존 상장 스팩 저가매수(≤1,950원) → +10% 매도 신호 |
+| `listed.py`, `data/listed.csv`, `data/holdings.csv` | 기존 상장 스팩 저가매수(≤1,940원, 종목당 50만 원) → +10% 매도 신호 |
 | `reports/` | 분석 보고서 (2026 증권사별 성과·잔여 수익 전망) |
 
 ## 계산 방식
