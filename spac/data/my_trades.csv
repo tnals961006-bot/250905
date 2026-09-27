@@ -1,2 +1,2 @@
-name,broker,subscribe_date,allotted_shares,fee,sell_date,sell_price,memo
-한국제17호스팩,🟡,2026-09-10~11,🟡,🟡,2026-09-22,🟡,첫날 매도(사용자 진술). 배정주·매도가·증권사 채워주세요
+name,broker,subscribe_date,allotted_shares,fee,sell_date,sell_price,sell_time,net_profit,memo
+한국제17호스팩,한국투자증권,2026-09-10~11,9,2000,2026-09-22,4885,🟡,23870,"균등만 청약(사용자 진술). 수수료 2000원은 한투 패밀리 등급 가정🟡. 매도가 공모가 대비 +144%, 장중고가 5220의 94%"
