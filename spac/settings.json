@@ -59,5 +59,18 @@
   "fees_sources": [
     "reports/2026-09-27-broker-analysis.md 3절 출처 목록 참고"
   ],
-  "customer_grade": "모든 증권사 기본 등급"
+  "customer_grade": "모든 증권사 기본 등급",
+  "listed_strategy": {
+    "_설명": "기존 상장 스팩 저가매수 전략. 🟡=사용자/데이터 확인 필요",
+    "buy_max_price": 1950,
+    "target_gain": 0.1,
+    "bank_rate": 0.025,
+    "_bank_rate_설명": "비교용 예금금리 🟡 (본인 주거래 은행 1년 예금금리로 수정)",
+    "default_trust_rate": 0.025,
+    "_default_trust_rate_설명": "예치이율 모를 때 가정. 2025년 하반기 이후 신규 스팩 예치이율 2%대 보도(다음/뉴스 2025-10-14) 🟡",
+    "life_months": 36,
+    "interest_tax": 0.154,
+    "max_per_spac_won": 500000,
+    "_max_per_spac_설명": "한 종목 최대 투자금(분산). 사용자와 협의해 조정"
+  }
 }
