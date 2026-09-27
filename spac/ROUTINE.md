@@ -13,7 +13,9 @@ cd spac
 - **모든 스팩 일정**을 점검한다: 오늘부터 **30일 안에** 수요예측·일반청약·상장이 있는 스팩, 그리고 최근 증권신고서를 낸 스팩(일정 미정 포함).
   - 청약 7일 전 이상이면 "예고", 7일 이내면 "추천/비추천 판정", 상장 2일 이내면 "매도 준비"로 메일에 구분해 적는다.
   - 판정은 calc.py 등급(A/B/C/?)과 이유를 그대로 쓰고, 계좌 없는 증권사면 개설 필요 여부를 맨 위에 적는다.
-- 시도 순서: ① `curl`로 KIND 공모일정·DART 청약달력 → ② 막히면 WebSearch
+- 시도 순서: ⓪ 환경변수 `OPENDART_API_KEY`가 있으면 OpenDART로 최근 45일 발행공시(증권신고서) 중 회사명에 "스팩" 또는 "기업인수목적"이 들어간 건을 조회한다
+  (`curl -s "https://opendart.fss.or.kr/api/list.json?crtfc_key=$OPENDART_API_KEY&bgn_de=YYYYMMDD&end_de=YYYYMMDD&pblntf_ty=C&page_count=100"` → `corp_name`, `report_nm`, `rcept_no` 확인.
+  키 값은 절대 출력·커밋·메일에 넣지 않는다) → ① `curl`로 KIND 공모일정·DART 청약달력 → ② 막히면 WebSearch
   (예: "스팩 수요예측 결과 {이번달}", "스팩 청약 {이번주}", "스팩 상장 {다음주}").
 - 종목마다 채울 값: `name, brokers(청약 가능한 주관·인수 증권사 목록, settings.json의 fees 표기와 같은 이름),
   subscription_start, subscription_end, listing_date, offer_size_eok, retail_shares(일반청약 배정 주식수),
