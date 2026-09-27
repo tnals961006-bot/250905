@@ -77,13 +77,16 @@ def market_mood(history, window):
         vals = [num(r[col]) / num(r["offer_price"]) - 1 for r in rows if num(r[col])]
         return (mean(vals), len(vals)) if vals else (None, 0)
 
-    apps = [num(r["applicants"]) for r in rows if num(r["applicants"])]
+    apps = [num(r.get("applicants")) for r in rows if num(r.get("applicants"))]
+    eq = [num(r.get("equal_shares_per_person")) for r in rows if num(r.get("equal_shares_per_person"))]
     return {
         "n": len(rows),
         "open": avg("open_price"),
+        "early": avg("early_price"),
         "high": avg("high_price"),
         "close": avg("close_price"),
         "applicants_median": median(apps) if apps else None,
+        "equal_median": median(eq) if eq else None,
     }
 
 
@@ -113,30 +116,42 @@ def analyze(cand, settings, mood):
 
     scen_apps = [applicants] if applicants else APPLICANT_SCENARIOS
     out["alloc"] = []
+    # 청약건수를 모르면 최근 스팩의 실제 균등배정 주식수를 기준 시나리오로 쓴다
+    eq = mood["equal_median"]
+    if not applicants and eq:
+        shares = round(eq)
+        out["alloc"].append({
+            "label": f"최근 스팩 균등 실적 {eq:g}주 기준", "shares": shares,
+            "breakeven": breakeven(shares, offer, fee, costs),
+            "rows": [(r, profit(shares, offer * (1 + r), offer, fee, costs)) for r in SCENARIOS]})
     for n in scen_apps:
         if not pool:
             break
         shares, _ = expected_profit(pool, n, 0, offer, fee, costs)
         rows = [(r, expected_profit(pool, n, r, offer, fee, costs)[1]) for r in SCENARIOS]
-        out["alloc"].append({"applicants": n, "shares": shares,
+        out["alloc"].append({"label": f"청약 {n:,.0f}건 가정", "shares": shares,
                              "breakeven": breakeven(shares, offer, fee, costs),
                              "rows": rows})
     out["app_note"] = app_note or "청약건수 미확인 → 가정 시나리오"
 
-    # 등급: 최근 스팩 시초가 평균 상승률(기준 시나리오)에서 기대이익
-    base_r = mood["open"][0]
+    # 등급: '장 초반 매도'를 가정한 기준 상승률에서 기대이익
+    base_r, base_label = mood["open"][0], "최근 스팩 시초가 평균"
+    if base_r is None and mood["early"][0] is not None:
+        base_r = mood["early"][0] * g.get("early_haircut", 0.5)
+        base_label = f"최근 스팩 장초반 평균 {pct(mood['early'][0])}의 {g.get('early_haircut', 0.5):g}배(보수)"
     grade, reasons = "C", []
-    if pool and base_r is not None:
-        mid = out["alloc"][len(out["alloc"]) // 2]
-        _, base_profit = expected_profit(pool, mid["applicants"], base_r, offer, fee, costs)
+    if out["alloc"] and base_r is not None:
+        base = out["alloc"][0] if not applicants and eq else out["alloc"][len(out["alloc"]) // 2]
+        base_profit = profit(base["shares"], offer * (1 + base_r), offer, fee, costs) \
+            if base["shares"] >= 1 else base["shares"] * profit(1, offer * (1 + base_r), offer, fee, costs)
         out["base_profit"] = base_profit
-        reasons.append(f"최근 스팩 시초가 평균 {pct(base_r)} 가정 시 기대이익 {won(base_profit)}")
+        reasons.append(f"{base_label} {pct(base_r)} 가정, {base['label']} → 기대이익 {won(base_profit)}")
         if base_profit >= g["min_profit_A"] and (out["demand"] or 0) >= g["demand_ratio_strong"]:
             grade = "A"
         elif base_profit > 0:
             grade = "B"
     else:
-        reasons.append("일반청약 물량 또는 최근 시초가 데이터가 없어 등급 계산 불가")
+        reasons.append("일반청약 물량 또는 최근 상장 데이터가 없어 등급 계산 불가")
         grade = "?"
     d = out["demand"]
     if d is None:
@@ -149,6 +164,10 @@ def analyze(cand, settings, mood):
             grade = "B"
     if not fee_known:
         reasons.append(f"청약수수료 기본값 {fee:,}원 적용🟡")
+    brokers = cand.get("brokers") or []
+    mine = settings.get("my_accounts", [])
+    if brokers and not set(brokers) & set(mine):
+        reasons.append(f"⚠ 내 계좌 없음 → {', '.join(brokers)} 중 하나 개설 필요(청약일 전까지)")
     out["grade"], out["reasons"] = grade, reasons
     return out
 
@@ -167,7 +186,7 @@ def render(settings, candidates, mood, today):
     lines.append(f"[스팩 균등청약 알림] {today.isoformat()}")
     lines.append("")
     lines.append("■ 시장 분위기 (최근 스팩 상장 첫날, 공모가 대비)")
-    for key, label in (("open", "시초가"), ("high", "장중고가"), ("close", "종가")):
+    for key, label in (("open", "시초가"), ("early", "장초반(기사 보도가)"), ("high", "장중고가"), ("close", "종가")):
         v, k = mood[key]
         lines.append(f"  - {label} 평균: {pct(v)} (표본 {k}건)")
     if mood["close"][0] is not None and mood["high"][0] is not None \
@@ -193,7 +212,7 @@ def render(settings, candidates, mood, today):
             for a in r["alloc"]:
                 sh = a["shares"]
                 sh_txt = f"{sh}주" if sh >= 1 else f"추첨(확률 {sh*100:.0f}%로 1주)"
-                lines.append(f"  - 청약 {a['applicants']:,.0f}건 가정({r['app_note']}): 균등 {sh_txt},"
+                lines.append(f"  - {a['label']}: 균등 {sh_txt},"
                              f" 손익분기 {pct(a['breakeven'])}")
                 lines.append("    " + " | ".join(f"{pct(x)}→{won(p)}" for x, p in a["rows"]))
             for src in c.get("sources", []):
