@@ -1,7 +1,7 @@
 name,code,listing_date,trust_rate,price,price_date,status,note,source
 한국제17호스팩,0200G0,2026-09-22,,2155,2026-09-22,,상장일 종가,https://www.newsway.co.kr/news/view?ud=2026092310343280045
 엔에이치스팩34호,0197V0,2026-09-10,,,,,,https://www.chickstockfi.com/stocks/0197V0
-케이비제34호스팩,,2026-09-22,,1914,2026-09-22,,상장일 종가,https://www.newsway.co.kr/news/view?ud=2026092310343280045
+케이비제34호스팩,0209J0,2026-09-22,,1905,2026-09-25,,종가(사용자 확인). 상장일 종가 1914,사용자 ; https://www.chickstockfi.com/stocks/0209J0
 한국제16호스팩,0164H0,2026-06-30,,,,,,https://www.chickstockfi.com/stocks/0164H0
 메리츠제2호스팩,,2026-06-19,,,,,,
 대신밸런스제20호스팩,0134X0,2026-06-05,,,,,,https://www.chickstockfi.com/stocks/0134X0
@@ -11,3 +11,7 @@ name,code,listing_date,trust_rate,price,price_date,status,note,source
 신한제17호스팩,,2026-04-01,,,,,,
 삼성스팩13호,0115H0,2026-01-21,,,,,,https://www.chickstockfi.com/stocks/0115H0
 삼성스팩12호,0096B0,,,,,,,https://www.chickstockfi.com/stocks/0096B0
+케이비제33호스팩,0072Z0,2025-09-30,,1967,2026-09-16,,,https://www.chickstockfi.com/stocks/0072Z0
+케이비제32호스팩,0037T0,2025-07-04,,1990,2026-09-16,,,https://www.chickstockfi.com/stocks/0037T0 ; https://www.newswell.co.kr/news/articleView.html?idxno=11780
+케이비제31호스팩,492220,2024-12-12,,2035,2026-09-16,합병 결의(삼진푸드),상장일 1914원,https://www.chickstockfi.com/stocks/492220 ; https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=03883526642137104
+케이비제30호스팩,486630,2024-09-25,,2050,2026-09-16,,,https://www.chickstockfi.com/stocks/486630 ; https://www.newswell.co.kr/news/articleView.html?idxno=10283
