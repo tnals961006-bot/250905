@@ -225,8 +225,10 @@ def render(settings, candidates, mood, today):
         lines.append("■ 곧 상장하는 스팩 (매도 준비)")
         for c in soon_list:
             lines.append(f"  - {c['name']}: 상장일 {c['listing_date']}")
-        lines.append("  매도 팁: 최근 사례는 장중 고가 후 종가가 공모가 근처로 밀렸다.")
-        lines.append("  미리 정한 규칙대로(예: 시초가 절반 + 9시 10분 전 나머지) 파는 것을 검토.")
+        lines.append("  매도 규칙(2026 데이터 기반, reports/2026-09-27-sell-timing.md):")
+        lines.append("   ① 08:30~09:00 동시호가에 절반 매도 주문 → 시초가 체결")
+        lines.append("   ② 나머지는 09:00~10:00 사이 고점 대비 10% 빠지면 매도, 늦어도 10:30 전량")
+        lines.append("   ③ 종가까지 들고 가지 않기 (2026 종가: 공모가 −2%~+8%)")
 
     lines.append("")
     lines.append("※ 투자 권유 아님. 🟡=확인 필요 값. 숫자는 settings.json에서 조정.")

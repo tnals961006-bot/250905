@@ -29,6 +29,7 @@ cd spac
     demand_ratio(수요예측), sub_ratio(일반청약 경쟁률)
 - **equal_shares_per_person(1인당 균등배정 주식수)** 와 applicants(청약건수)는 가장 중요한 값이다. 청약 마감 뉴스나 증권사 공지에서 찾으면 꼭 기록한다.
 - note에 불확실한 부분, source에 URL을 적는다. 출처가 충돌하면 비워둔다.
+- 같은 스팩의 **시각이 적힌 가격**("오전 9시 15분 기준 ○○원", 시초가, 종가, 고가)은 `data/intraday.csv`에 한 줄씩 추가한다. `python3 timing.py`로 시간대별 표가 갱신된다.
 
 ## 3. 계산
 ```bash
