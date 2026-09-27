@@ -58,16 +58,18 @@ def analyze(row, today, cfg, costs, held):
     floor_annual = floor_gain / left
     target = price * (1 + cfg["target_gain"])
     status = row.get("status") or ""
+    hurdle = max(cfg["bank_rate"], cfg.get("target_annual", 0))
 
     signal, why = "관망", []
     if "합병" in status:
         signal = "제외"
         why.append(f"합병 진행({status}) → 바닥 보장 약해짐. 합병 반대 시 주식매수청구권 검토")
-    elif price <= cfg["buy_max_price"] and floor_annual >= cfg["bank_rate"]:
+    elif price <= cfg["buy_max_price"] and floor_annual >= hurdle:
         signal = "매수 후보"
-        why.append(f"{price:,.0f}원 ≤ 기준 {cfg['buy_max_price']:,}원, 바닥 연수익 {floor_annual*100:.1f}% ≥ 예금 {cfg['bank_rate']*100:.1f}%")
+        why.append(f"{price:,.0f}원 ≤ 기준 {cfg['buy_max_price']:,}원, 바닥 연수익 {floor_annual*100:.1f}% ≥ 목표 {hurdle*100:.1f}%")
     elif price <= cfg["buy_max_price"]:
-        why.append(f"가격은 싸지만 바닥 연수익 {floor_annual*100:.1f}%가 예금보다 낮음")
+        why.append(f"가격은 싸지만 바닥 연수익 {floor_annual*100:.1f}% < 목표 {hurdle*100:.1f}%"
+                   + (" (예금보다는 높음)" if floor_annual >= cfg["bank_rate"] else ""))
     if "관리" in status:
         why.append("관리종목: 해산 임박 가능성 → 반환금·일정 확인")
 
@@ -125,7 +127,8 @@ def main():
             lines.append(f"      · {w_}")
     if no_price:
         lines.append(f"  (현재가 없음 {len(no_price)}종목: {', '.join(no_price[:6])}{' 외' if len(no_price) > 6 else ''})")
-    lines.append(f"  규칙: {cfg['buy_max_price']:,}원 이하 + 바닥 연수익 ≥ 예금 {cfg['bank_rate']*100:.1f}% → 매수 후보,"
+    hurdle = max(cfg["bank_rate"], cfg.get("target_annual", 0))
+    lines.append(f"  규칙: {cfg['buy_max_price']:,}원 이하 + 바닥 연수익 ≥ 목표 {hurdle*100:.1f}% → 매수 후보,"
                  f" 매수가 +{cfg['target_gain']*100:.0f}% → 매도, 합병 발표 종목은 제외. 한 종목 최대 {cfg['max_per_spac_won']:,}원")
     text = "\n".join(lines)
     (BASE / "out").mkdir(exist_ok=True)
