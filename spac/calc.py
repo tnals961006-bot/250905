@@ -220,6 +220,17 @@ def render(settings, candidates, mood, today):
     else:
         lines.append("■ 7일 내 청약 예정 스팩 없음")
 
+    later = [c for c in candidates if c not in soon_sub and c.get("subscription_start")
+             and today + timedelta(days=7) < date.fromisoformat(c["subscription_start"]) <= today + timedelta(days=30)]
+    if later:
+        lines.append("")
+        lines.append("■ 예고 (8~30일 뒤 청약)")
+        mine = set(settings.get("my_accounts", []))
+        for c in later:
+            b = c.get("brokers") or []
+            warn = "" if set(b) & mine else f"  ⚠ 계좌 개설 필요({', '.join(b) or '증권사 미확인'})"
+            lines.append(f"  - {c['name']}: 청약 {c['subscription_start']} / 증권사 {', '.join(b) or '미확인'}{warn}")
+
     if soon_list:
         lines.append("")
         lines.append("■ 곧 상장하는 스팩 (매도 준비)")
@@ -245,7 +256,11 @@ def main():
     body, subs, lists, results = render(settings, candidates, mood, today)
 
     grades = [r["grade"] for r in results]
-    if subs or lists:
+    later_n = sum(1 for c in candidates if c.get("subscription_start")
+                  and today + timedelta(days=7) < date.fromisoformat(c["subscription_start"]) <= today + timedelta(days=30))
+    if later_n and not (subs or lists):
+        subject = f"[스팩알림] {today:%m/%d} 예고 {later_n}건"
+    elif subs or lists:
         tags = []
         if subs:
             tags.append(f"추천 {grades.count('A')}건" if "A" in grades else f"청약 {len(subs)}건")
