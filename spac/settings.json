@@ -1,0 +1,22 @@
+{
+  "_설명": "숫자를 바꾸면 추천 기준이 바뀐다. 🟡 표시는 사용자가 확인해서 고쳐야 하는 값.",
+  "email_to": "tnals961006@gmail.com",
+  "offer_price_default": 2000,
+  "min_subscription_shares": 10,
+  "fees": {
+    "_설명": "청약 수수료(배정 시 1건당, 원). 증권사·고객등급마다 다름 🟡 본인이 쓰는 증권사 값을 확인해 추가하면 그 값이 우선 적용됨",
+    "default": 2000
+  },
+  "sell_costs": {
+    "_설명": "매도 시 비용 비율. 2026년 코스닥 증권거래세 0.20% (헤럴드경제·키움투자자산운용 2026 정리, 2026-09-27 확인). 매매수수료는 증권사별 🟡",
+    "transaction_tax": 0.002,
+    "brokerage": 0.00015
+  },
+  "grading": {
+    "_설명": "추천 등급 기준. 사용자가 직접 조정 가능.",
+    "min_profit_A": 3000,
+    "demand_ratio_strong": 1000,
+    "demand_ratio_weak": 500,
+    "recent_window": 6
+  }
+}

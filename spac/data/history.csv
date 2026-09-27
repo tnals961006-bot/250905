@@ -1,0 +1,4 @@
+name,listing_date,offer_price,open_price,high_price,close_price,demand_ratio,retail_shares,applicants,equal_shares_per_person,note,source
+한국제17호스팩,2026-09-22,2000,,5220,2170,1270.51,1750000,,,"시초가·청약건수 미확인🟡",https://www.ajunews.com/view/20260922091800089 ; https://www.datatooza.com/article/20260909150542518352ef3c061b_80
+케이비제34호스팩,2026-09-22,2000,,4580,,1232,,,,"종가 출처 충돌: 2085(잡포스트) vs 1914(뉴스웰) → 비워둠. 09:15 기준 3880",https://www.job-post.co.kr/news/articleView.html?idxno=228857 ; http://www.newswell.co.kr/news/articleView.html?idxno=22175
+삼성스팩12호,,2000,4330,6420,,,,,,"상장일 미확인🟡(기사 기준 2025년 추정). 장중 최저 3350",https://www.businesspost.co.kr/BP?command=article_view&num=421796
