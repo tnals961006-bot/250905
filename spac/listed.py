@@ -47,6 +47,59 @@ def floor_value(listing, today, rate, cfg):
     return payout, left
 
 
+BROKER_PREFIX = [("케이비", "KB증권"), ("KB", "KB증권"), ("한국", "한국투자증권"), ("엔에이치", "NH투자증권"),
+                 ("NH", "NH투자증권"), ("대신", "대신증권"), ("신한", "신한투자증권"), ("삼성", "삼성증권"),
+                 ("교보", "교보증권"), ("키움", "키움증권"), ("하나", "하나증권"), ("미래에셋", "미래에셋증권"),
+                 ("IBKS", "IBK투자증권"), ("유안타", "유안타증권"), ("DB", "DB증권"), ("SK", "SK증권"),
+                 ("메리츠", "메리츠증권"), ("유진", "유진투자증권"), ("하이", "iM증권"), ("상상인", "상상인증권"),
+                 ("한화", "한화투자증권"), ("BNK", "BNK투자증권"), ("신영", "신영증권"), ("현대차", "현대차증권"),
+                 ("LS", "LS증권"), ("다올", "다올투자증권"), ("부국", "부국증권"), ("한양", "한양증권")]
+
+# 합병 단계별 대응 안내 (reports/2026-09-28-merger.md 근거)
+MERGER_GUIDE = {
+    "합병 결의": "합병 공시 → 곧 예비심사·거래정지. 바닥(예치금) 보장 약해짐",
+    "예비심사 청구": "심사 중 거래정지. 통과 시 재개 직후 급등 사례 多, 탈락·철회 시 재개일 평균 −8%",
+    "거래정지": "심사 중 거래정지. 재개일 공지 확인",
+    "예심 통과": "거래 재개 → 기대감 급등 구간. 보유분은 급등 시 분할 매도",
+    "주총": "반대의사 통지 마감(주총 전일) 확인. 주주확정 기준일 보유자만 매수청구 가능",
+}
+
+
+def broker_of(name):
+    for pre, b in BROKER_PREFIX:
+        if name.startswith(pre):
+            return b
+    return None
+
+
+def merger_view(row, today, settings, held):
+    """합병 가능성(주관사 성공률·존립기한) 과 합병 진행 시 대응 안내."""
+    cfg = settings["listed_strategy"]
+    rates = settings.get("merger_success_by_broker", {})
+    b = broker_of(row["name"])
+    rate = rates.get(b)
+    notes = []
+    listing = date.fromisoformat(row["listing_date"])
+    months_left = cfg["life_months"] - (today - listing).days / 30.44
+    # 존립기한 6개월 전까지 예비심사를 청구해야 함 → 그 직전 6~12개월이 '짝 찾기 압박' 구간
+    phase = ("합병 마감 임박(예심 청구 기한 경과 → 해산 가능성↑)" if months_left < 6 else
+             "짝 찾기 막판(6~12개월)" if months_left < 12 else
+             "탐색기" if months_left < 30 else "초기")
+    notes.append(f"주관 {b or '?'} 합병성공률 {f'{rate}%' if rate else '미확인'} · 존립기한까지 {months_left:.0f}개월({phase})")
+    status = row.get("status") or ""
+    for k, g in MERGER_GUIDE.items():
+        if k in status:
+            sd = row.get("status_date") or ""
+            notes.append(f"⚑ {status}{f'({sd})' if sd else ''}: {g}")
+            if row["name"] in held:
+                notes.append("   보유 대응: ① 급등하면 분할 매도 ② 합병상장 후 3개월 내 87.5% 하락(평균 −31.8%) → 합병기일 전 정리"
+                             " ③ 대상 기업이 별로면 주총 전일까지 반대의사 통지 → 주식매수청구권")
+            else:
+                notes.append("   미보유: 바닥 보장 약해져 저가매수 전략에서 제외")
+            break
+    return notes, rate, months_left
+
+
 def analyze(row, today, cfg, costs, held):
     price = num(row["price"])
     if not price or not row["listing_date"]:
@@ -63,9 +116,8 @@ def analyze(row, today, cfg, costs, held):
     max_buy = payout / (1 + hurdle * left) / (1 + costs["brokerage"])
 
     signal, why = "관망", []
-    if "합병" in status:
-        signal = "제외"
-        why.append(f"합병 진행({status}) → 바닥 보장 약해짐. 합병 반대 시 주식매수청구권 검토")
+    if any(k in status for k in ("합병", "예비심사", "거래정지", "예심", "주총")):
+        signal = "합병 진행"
     elif price <= cap and floor_annual >= hurdle:
         signal = "매수 후보"
         why.append(f"바닥 연수익 {floor_annual*100:.1f}% ≥ 목표 {hurdle*100:.1f}% (연 {hurdle*100:.0f}% 되는 최대 매수가 {max_buy:,.0f}원)")
@@ -113,7 +165,11 @@ def main():
 
     held = {h["name"]: h for h in csv.DictReader(open(BASE / "data/holdings.csv", encoding="utf-8"))}
     res = [a for a in (analyze(r, today, cfg, costs, held) for r in rows) if a]
-    order = {"매도 신호": 0, "매수 후보": 1, "관망": 2, "제외": 3}
+    order = {"매도 신호": 0, "합병 진행": 1, "매수 후보": 2, "관망": 3}
+    for a in res:
+        row = next(r for r in rows if r["name"] == a["name"])
+        notes, a["merger_rate"], a["months_left"] = merger_view(row, today, settings, held)
+        a["why"] += notes
     res.sort(key=lambda a: (order[a["signal"]], a["price"]))
 
     lines = ["", "■ 기존 상장 스팩 (저가매수 → +10% 매도 전략)"]
@@ -131,6 +187,7 @@ def main():
         lines.append(f"  (현재가 없음 {len(no_price)}종목: {', '.join(no_price[:6])}{' 외' if len(no_price) > 6 else ''})")
     hurdle = max(cfg["bank_rate"], cfg.get("target_annual", 0))
     cap_txt = f"{cfg['buy_max_price']:,}원 이하 + " if cfg.get("buy_max_price") else ""
+    lines.append("  합병 대응 원칙: 합병 진행 종목은 신규 매수 X · 보유분은 급등 시 매도, 합병상장 전 정리 또는 매수청구권")
     lines.append(f"  규칙: {cap_txt}해산까지 보유해도 연 {hurdle*100:.1f}% 이상인 가격 → 매수 후보,"
                  f" 매수가 +{cfg['target_gain']*100:.0f}% → 매도, 합병 발표 종목은 제외. 한 종목 최대 {cfg['max_per_spac_won']:,}원")
     text = "\n".join(lines)
@@ -138,7 +195,12 @@ def main():
     (BASE / "out/listed.txt").write_text(text, encoding="utf-8")
     buy = sum(a["signal"] == "매수 후보" for a in res)
     sell = sum(a["signal"] == "매도 신호" for a in res)
-    tag = " · ".join(t for t in (f"매도신호 {sell}" if sell else "", f"매수후보 {buy}" if buy else "") if t)
+    recent = [r for r in rows if r.get("status_date") and (today - date.fromisoformat(r["status_date"])).days <= 7]
+    if recent:
+        tag_m = f"합병공시 {len(recent)}"
+    else:
+        tag_m = ""
+    tag = " · ".join(t for t in (tag_m, f"매도신호 {sell}" if sell else "", f"매수후보 {buy}" if buy else "") if t)
     (BASE / "out/listed_subject.txt").write_text(f"기존스팩 {tag}" if tag else "", encoding="utf-8")
     print(text)
 

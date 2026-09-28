@@ -23,6 +23,7 @@
 | `ROUTINE.md` | 매일 자동 실행 절차 |
 | `data/intraday.csv`, `timing.py` | 상장 첫날 시각별 가격 → 시간대별 상승률 표 |
 | `listed.py`, `data/listed.csv`, `data/holdings.csv` | 기존 상장 스팩 저가매수(해산까지 보유해도 연 8% 이상인 가격, 종목당 50만 원) → +10% 매도 신호 |
+| `data/merger_events.csv` | 합병 공시 이력(단계·전후 가격) — 합병 알림·대응 안내는 listed.py |
 | `reports/` | 분석 보고서 (2026 증권사별 성과·잔여 수익 전망) |
 
 ## 계산 방식
