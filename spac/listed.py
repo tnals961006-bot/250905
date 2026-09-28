@@ -11,7 +11,8 @@ import argparse
 import csv
 import json
 import urllib.request
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 BASE = Path(__file__).parent
@@ -143,7 +144,7 @@ def analyze(row, today, cfg, costs, held):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--today", default=date.today().isoformat())
+    ap.add_argument("--today", default=datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat())  # KST 기준
     ap.add_argument("--fetch", action="store_true")
     args = ap.parse_args()
     today = date.fromisoformat(args.today)

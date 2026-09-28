@@ -10,7 +10,8 @@ import argparse
 import csv
 import json
 import math
-from datetime import date, timedelta
+from datetime import date, datetime
+from zoneinfo import ZoneInfo, timedelta
 from pathlib import Path
 from statistics import mean, median
 
@@ -248,7 +249,7 @@ def render(settings, candidates, mood, today):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--today", default=date.today().isoformat())
+    ap.add_argument("--today", default=datetime.now(ZoneInfo("Asia/Seoul")).date().isoformat())  # KST 기준
     args = ap.parse_args()
     today = date.fromisoformat(args.today)
     settings, candidates, history = load()
