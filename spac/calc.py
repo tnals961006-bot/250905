@@ -10,8 +10,8 @@ import argparse
 import csv
 import json
 import math
-from datetime import date, datetime
-from zoneinfo import ZoneInfo, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from statistics import mean, median
 
