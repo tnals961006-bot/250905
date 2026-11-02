@@ -24,6 +24,7 @@
   "subscription_end": "2026-10-21",
   "offer_size_eok": 120,
   "sources": [
+   "https://www.therich.io/ipo/61",
    "https://www.therich.io/ipo/61"
   ]
  },
@@ -47,7 +48,22 @@
    "우리투자증권"
   ],
   "sources": [
-   "https://economist.co.kr/article/view/ecn202610130049"
+   "https://economist.co.kr/article/view/ecn202610130049",
+   "https://www.therich.io/ipo/81"
+  ],
+  "subscription_start": "2026-12-02",
+  "subscription_end": "2026-12-03"
+ },
+ {
+  "name": "신영해피투모로우제12호스팩",
+  "brokers": [
+   "신영증권"
+  ],
+  "subscription_start": "2026-11-24",
+  "subscription_end": "2026-11-25",
+  "offer_size_eok": 125,
+  "sources": [
+   "https://www.therich.io/ipo/82"
   ]
  }
 ]
