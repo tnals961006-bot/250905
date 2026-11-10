@@ -27,3 +27,7 @@ name,date,time,price,kind,source
 한국제17호스팩,2026-09-22,14:25,3665,보도가,https://www.job-post.co.kr/news/articleView.html?idxno=228818
 한국제17호스팩,2026-09-22,,5220,고가,https://www.hankyung.com/article/2026092217581
 한국제17호스팩,2026-09-22,15:30,2155,종가,https://www.ajunews.com/view/20260922091800089 ; https://www.hankyung.com/article/2026092217581
+아이엠스팩1호,2026-11-04,10:13,2115,보도가,https://www.businesspost.co.kr/BP?command=article_view&num=451112
+아이엠스팩1호,2026-11-04,,3685,고가(장초반),http://www.newswell.co.kr/news/articleView.html?idxno=23373
+아이엠스팩1호,2026-11-04,14:21,1863,보도가,https://www.ajunews.com/view/20261104142149199
+아이엠스팩1호,2026-11-04,15:30,1863,종가,https://www.dnews.co.kr/uhtml/view.jsp?idxno=202611041542210430652
