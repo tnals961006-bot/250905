@@ -30,4 +30,4 @@ name,date,time,price,kind,source
 아이엠스팩1호,2026-11-04,10:13,2115,보도가,https://www.businesspost.co.kr/BP?command=article_view&num=451112
 아이엠스팩1호,2026-11-04,,3685,고가(장초반),http://www.newswell.co.kr/news/articleView.html?idxno=23373
 아이엠스팩1호,2026-11-04,14:21,1863,보도가,https://www.ajunews.com/view/20261104142149199
-아이엠스팩1호,2026-11-04,15:30,1863,종가,https://www.dnews.co.kr/uhtml/view.jsp?idxno=202611041542210430652
+아이엠스팩1호,2026-11-04,15:30,,종가(출처 충돌: 대한경제 1863 vs 콕스톡 1999),https://www.dnews.co.kr/uhtml/view.jsp?idxno=202611041542210430652 ; https://www.kokstock.com/stock/item.asp?item_cd=0222E0
