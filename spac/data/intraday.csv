@@ -31,3 +31,7 @@ name,date,time,price,kind,source
 아이엠스팩1호,2026-11-04,,3685,고가(장초반),http://www.newswell.co.kr/news/articleView.html?idxno=23373
 아이엠스팩1호,2026-11-04,14:21,1863,보도가,https://www.ajunews.com/view/20261104142149199
 아이엠스팩1호,2026-11-04,15:30,,종가(출처 충돌: 대한경제 1863 vs 콕스톡 1999),https://www.dnews.co.kr/uhtml/view.jsp?idxno=202611041542210430652 ; https://www.kokstock.com/stock/item.asp?item_cd=0222E0
+에스케이증권제14호스팩,2026-10-27,09:00,4065,시초가,https://www.etoday.co.kr/market/mkt_stkinfo?varIssCd=0205H0
+에스케이증권제14호스팩,2026-10-27,09:52,3475,보도가(시세 스냅샷),https://www.etoday.co.kr/market/mkt_stkinfo?varIssCd=0205H0
+한화플러스제6호스팩,2026-10-30,09:00,2810,시초가,https://etfshopping.com/ipo/%ED%95%9C%ED%99%94%ED%94%8C%EB%9F%AC%EC%8A%A4%EC%A0%9C6%ED%98%B8%EC%8A%A4%ED%8C%A9
+한화플러스제6호스팩,2026-10-30,15:30,1866,종가,https://etfshopping.com/ipo/%ED%95%9C%ED%99%94%ED%94%8C%EB%9F%AC%EC%8A%A4%EC%A0%9C6%ED%98%B8%EC%8A%A4%ED%8C%A9
